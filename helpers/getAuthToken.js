@@ -4,7 +4,7 @@ const _ = require('lodash');
 const NodeCache = require('node-cache');
 
 const cache = new NodeCache({
-  stdTTL: 60 * 10
+  stdTTL: 59 * 60
 });
 
 const getAuthToken = async ({ issuerEmail, privateKey }, requestWithDefaults, Logger) => {

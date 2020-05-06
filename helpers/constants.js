@@ -5,7 +5,16 @@ const IOC_ARTIFACT_TYPES = {
   ip: 'destination_ip_address'
 };
 
+const ASSET_ARTIFACT_TYPES = {
+  domain: 'domain_name',
+  ip: 'destination_ip_address',
+  md5: 'hash_md5',
+  sha1: 'hash_sha1',
+  sha256: 'hash_sha256'
+};
+
 module.exports = {
   IGNORED_IPS,
-  IOC_ARTIFACT_TYPES
+  IOC_ARTIFACT_TYPES,
+  ASSET_ARTIFACT_TYPES
 };

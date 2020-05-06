@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const { IGNORED_IPS, IOC_ARTIFACT_TYPES } = require('./constants');
+const { IGNORED_IPS, IOC_ARTIFACT_TYPES, ASSET_ARTIFACT_TYPES } = require('./constants');
 
 const { partitionFlatMap, groupEntities, _P } = require('./dataTransformations');
 
@@ -21,6 +21,10 @@ const getLookupResults = (entities, options, requestWithDefaults, Logger) =>
       );
 
       Logger.trace({ iocDetails }, 'IOC Details');
+
+      const assets = await getAssets(entityGroups, options, requestWithDefaults, Logger);
+
+      Logger.trace({ assets }, 'Assets');
 
       const lookupResults = [];
       return lookupResults.concat(ignoredIpLookupResults);
@@ -46,8 +50,9 @@ const getIocDetails = async (entityGroups, options, requestWithDefaults, Logger)
   _P
     .chain(entityGroups)
     .omit(['mac', 'md5', 'sha1', 'sha256'])
-    .flatMap((entityGroup, entityType) =>
-      _P.reduce(entityGroup, async (agg, entity) => {
+    .reduce((agg, entityGroup, entityType) => ({
+      ...agg,
+      ..._P.reduce(entityGroup, async (agg, entity) => {
         const {
           body: iocDetails
         } = await requestWithDefaults({
@@ -68,18 +73,19 @@ const getIocDetails = async (entityGroups, options, requestWithDefaults, Logger)
           ? agg
           : _formatIocDetails(agg, iocDetails, entity.value);
       }, {})
-    )
+    }), {})
     .value();
 
+
 const _formatIocDetails = (agg, iocDetails, entityValue) => {
-  const uri = iocDetails.uri && { iocLink: iocDetails.uri };
+  const uri = iocDetails.uri && { iocLink: iocDetails.uri[0] };
 
   const sources = iocDetails.sources && {
     iocSources: iocDetails.sources.map(
       ({ firstActiveTime, lastActiveTime, ...source }) => ({
         ...source,
-        firstActiveTime: moment(firstActiveTime).format(),
-        lastActiveTime: moment(lastActiveTime).format()
+        firstActiveTime: moment(firstActiveTime).format('MMM DD YYYY, h:mm A'),
+        lastActiveTime: moment(lastActiveTime).format('MMM DD YYYY, h:mm A')
       })
     )
   };
@@ -93,6 +99,40 @@ const _formatIocDetails = (agg, iocDetails, entityValue) => {
   };
 };
 
+const getAssets = async (entityGroups, options, requestWithDefaults, Logger) =>
+  _P
+    .chain(entityGroups)
+    .omit(['mac'])
+    .reduce(
+      (agg, entityGroup, entityType) => ({
+        ...agg,
+        ..._P.reduce(
+          entityGroup,
+          async (agg, entity) => {
+            const { body: assetList } = await requestWithDefaults({
+              url: 'https://backstory.googleapis.com/v1/artifact/listassets',
+              options,
+              qs: {
+                [`artifact.${ASSET_ARTIFACT_TYPES[entityType]}`]: entity.value,
+                page_size: 50,
+                ...generateTimes(options)
+              }
+            });
+
+            const valueReturned =
+              assetList &&
+              ((assetList.uri && assetList.uri.length) ||
+                (assetList.assets && assetList.assets.length));
+
+            return !valueReturned ? agg : _formatAssetList(agg, assetList, entity.value);
+          },
+          {}
+        )
+      }),
+      {}
+    )
+    .value();
+    
 const generateTimes = ({ monthsBack }, queryingEvents = false) => {
   const monthsBackDateTime =
     moment
@@ -105,6 +145,40 @@ const generateTimes = ({ monthsBack }, queryingEvents = false) => {
     start_time: monthsBackDateTime,
     end_time: moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z',
     ...(queryingEvents && { reference_time: monthsBackDateTime })
+  };
+};
+
+const _formatAssetList = (agg, assetList, entityValue) => {
+  const uri = assetList.uri && { iocLink: assetList.uri[0] };
+
+  const assets = assetList.assets && {
+    assets: assetList.assets.map(
+      ({
+        asset: { hostname },
+        firstSeenArtifactInfo: {
+          artifactIndicator: { domainName: firstSeenDomainName },
+          seenTime: firstSeenTime
+        },
+        lastSeenArtifactInfo: {
+          artifactIndicator: { domainName: lastSeenDomainName },
+          seenTime: lastSeenTime
+        },
+      }) => ({
+        hostname,
+        firstSeenDomainName,
+        firstSeenTime: moment(firstSeenTime).format('MMM DD YYYY, h:mm A'),
+        lastSeenDomainName,
+        lastSeenTime: moment(lastSeenTime).format('MMM DD YYYY, h:mm A'),
+      })
+    )
+  };
+
+  return {
+    ...agg,
+    [entityValue]: {
+      ...uri,
+      ...assets
+    }
   };
 };
 
