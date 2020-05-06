@@ -3,9 +3,8 @@ module.exports = {
   acronym: 'CB',
   description:
     'Chronicle Backstory combines intelligence about global threats in the wild, threats inside your network, and unique signals about both.',
-  entityTypes: ['IPv4', 'IPv6', 'hash', 'domain', 'email'],
+  entityTypes: ['IPv4', 'IPv6', 'domain', 'url', 'MAC', 'hash'],
   styles: ['./styles/styles.less'],
-  // onDemandOnly: true,
   block: {
     component: {
       file: './components/block.js'
@@ -43,6 +42,16 @@ module.exports = {
       type: 'password',
       userCanEdit: false,
       adminOnly: true
+    },
+    {
+      key: 'monthsBack',
+      name: 'Months Back',
+      description:
+        'The number of months you would like to look back for violations (decimals work as well, e.g. 0.25)',
+      default: 6,
+      type: 'number',
+      userCanEdit: true,
+      adminOnly: false
     }
   ]
 };
