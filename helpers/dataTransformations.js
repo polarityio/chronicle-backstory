@@ -1,6 +1,11 @@
 const _ = require("lodash");
 const Aigle = require("aigle");
+const moment = require('moment');
+
+const { IGNORED_IPS } = require('./constants');
+
 const _P = Aigle.mixin(_);
+
 
 const partitionFlatMap = (func, partitionSize, collection, parallelLimit = 10) =>
   _P
@@ -30,9 +35,40 @@ const groupEntities = (entities) =>
     .omit("unknown")
     .value();
 
+
+const splitOutIgnoredIps = (_entitiesPartition) => {
+  const { ignoredIPs, entitiesPartition } = _.groupBy(
+    _entitiesPartition,
+    ({ isIP, value }) =>
+      !isIP || (isIP && !IGNORED_IPS.has(value)) ? 'entitiesPartition' : 'ignoredIPs'
+  );
+
+  return {
+    entitiesPartition,
+    ignoredIpLookupResults: _.map(ignoredIPs, (entity) => ({ entity, data: null }))
+  };
+};
+
+const generateTimes = ({ monthsBack }, queryingEvents = false) => {
+  const monthsBackDateTime =
+    moment
+      .utc()
+      .subtract(Math.floor(Math.abs(monthsBack)), 'months')
+      .subtract((Math.abs(monthsBack) % 1) * 30.41, 'days')
+      .format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+
+  return {
+    start_time: monthsBackDateTime,
+    end_time: moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z',
+    ...(queryingEvents && { reference_time: monthsBackDateTime })
+  };
+};
+
 module.exports = {
+  _P,
   partitionFlatMap,
   getKeys,
   groupEntities,
-  _P
+  splitOutIgnoredIps,
+  generateTimes
 };

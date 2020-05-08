@@ -3,7 +3,7 @@ module.exports = {
   acronym: 'CB',
   description:
     'Chronicle Backstory combines intelligence about global threats in the wild, threats inside your network, and unique signals about both.',
-  entityTypes: ['IPv4', 'IPv6', 'domain', 'url', 'MAC', 'hash'],
+  entityTypes: ['IPv4', 'IPv6', 'domain', 'MAC', 'hash'],
   styles: ['./styles/styles.less'],
   block: {
     component: {

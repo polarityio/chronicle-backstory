@@ -13,8 +13,15 @@ const ASSET_ARTIFACT_TYPES = {
   sha256: 'hash_sha256'
 };
 
+const EVENT_INDICATOR_TYPES = {
+  domain: 'hostname',
+  ip: 'asset_ip_address',
+  mac: 'mac'
+};
+
 module.exports = {
   IGNORED_IPS,
   IOC_ARTIFACT_TYPES,
-  ASSET_ARTIFACT_TYPES
+  ASSET_ARTIFACT_TYPES,
+  EVENT_INDICATOR_TYPES
 };

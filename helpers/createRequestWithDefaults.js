@@ -57,13 +57,15 @@ const createRequestWithDefaults = (Logger) => {
     return postRequestFunctionResults;
   };
 
-  const handleAuth = async (requestOptions) => {    
-    const token = await getAuthToken(requestOptions.options, requestWithDefaults(), Logger).catch(
-      (error) => {
-        Logger.error({ error }, 'Unable to retrieve Auth Token');
-        throw error;
-      }
-    );
+  const handleAuth = async (requestOptions) => {
+    const token = await getAuthToken(
+      requestOptions.options,
+      requestWithDefaults(),
+      Logger
+    ).catch((error) => {
+      Logger.error({ error }, 'Unable to retrieve Auth Token');
+      throw error;
+    });
 
     Logger.trace({ token }, 'Token');
 
