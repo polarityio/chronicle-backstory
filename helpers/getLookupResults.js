@@ -8,6 +8,7 @@ const {
 const getIocDetails = require('./getIocDetails');
 const getAssets = require('./getAssets');
 const getEvents = require('./getEvents');
+const createLookupResults = require('./createLookupResults');
 
 const getLookupResults = (entities, options, requestWithDefaults, Logger) =>
   partitionFlatMap(
@@ -23,9 +24,10 @@ const getLookupResults = (entities, options, requestWithDefaults, Logger) =>
         events: getEvents(entityGroups, options, requestWithDefaults, Logger)
       });
 
-      Logger.trace({ iocDetails, assets, events }, 'Query Results');
+      const lookupResults = createLookupResults(entityGroups, iocDetails, assets, events);
+      
+      Logger.trace({ iocDetails, assets, events, lookupResults }, 'Query Results');
 
-      const lookupResults = [];
       return lookupResults.concat(ignoredIpLookupResults);
     },
     20,
