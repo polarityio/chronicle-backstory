@@ -1,0 +1,265 @@
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a {{action "changeTab" "events"}} class="nav-link {{if (or (eq activeTab "events")(not activeTab)) "active"}}" href="#">
+      Events ({{if details.events.length details.events.length "0"}})
+    </a>
+  </li>
+  <li class="nav-item">
+    <a {{action "changeTab" "assets"}} class="nav-link {{if (or (eq activeTab "assets")(not activeTab)) "active"}}" href="#">
+      Assets ({{if details.assets.length details.assets.length "0"}})
+    </a>
+  </li>
+  <li class="nav-item">
+    <a {{action "changeTab" "iocDetails"}} class="nav-link {{if (or (eq activeTab "iocDetails")(not activeTab)) "active"}}" href="#">
+      IOC Details ({{if details.iocSources.length details.iocSources.length "0"}})
+    </a>
+  </li>
+</ul>
+
+{{#if (eq activeTab "events")}}
+  {{#if details.eventsLink}}
+    <div class="p-title">
+      <a class="p-link" href={{details.eventsLink}}>
+        View Events in Chronicle
+        {{fa-icon "external-link-square" class="external-link-icon"}}
+      </a>
+    </div>
+  {{/if}}
+
+  {{#if details.events.length}}
+    <h1 class="p-title">
+      {{fa-icon "info" fixedWidth=true}} Events
+    </h1>
+    {{#each details.events as | event index |}}
+      {{#if (gt index 0)}}
+        <hr>
+      {{/if}}
+      <div class="mb-2">
+        {{#if event.eventType}}
+          <div>
+            <span class="p-key">Type: </span>
+            <span class="p-value">{{event.eventType}}</span>
+          </div>
+        {{/if}}
+        {{#if event.eventTimestamp}}
+          <div>
+            <span class="p-key">Time: </span>
+            <span class="p-value">{{event.eventTimestamp}}</span>
+          </div>
+        {{/if}}
+        {{#if (and event.principal (or event.principal.hostname event.principal.ip event.principal.url))}}
+          <h1 class="p-title">Principal Info:</h1>
+          {{#if event.principal.hostname}}
+            <div>
+              <span class="p-key">Host Name: </span>
+              <span class="p-value">{{event.principal.hostname}}</span>
+            </div>
+          {{/if}}
+          {{#if event.principal.ip}}
+            <div>
+              <span class="p-key">IPs: </span>
+              <span class="p-value">{{event.principal.ip}}</span>
+            </div>
+          {{/if}}
+          {{#if event.principal.url}}
+            <div>
+              <span class="p-key">URL: </span>
+              <span class="p-value">{{event.principal.url}}</span>
+            </div>
+          {{/if}}
+        {{/if}}
+        {{#if (and event.target (or event.target.hostname event.target.ip event.target.url))}}
+          <h1 class="p-title">Target Info:</h1>
+          {{#if event.target.hostname}}
+            <div>
+              <span class="p-key">Host Name: </span>
+              <span class="p-value">{{event.target.hostname}}</span>
+            </div>
+          {{/if}}
+          {{#if event.target.ip}}
+            <div>
+              <span class="p-key">IPs: </span>
+              <span class="p-value">{{event.target.ip}}</span>
+            </div>
+          {{/if}}
+          {{#if event.target.url}}
+            <div>
+              <span class="p-key">URL: </span>
+              <span class="p-value">{{event.target.url}}</span>
+            </div>
+          {{/if}}
+        {{/if}}
+        {{#if (and event.network (or event.network.applicationProtocol event.network.ipProtocol event.network.http))}}
+          <h1 class="p-title">Network Info:</h1>
+          {{#if event.network.applicationProtocol}}
+            <div>
+              <span class="p-key">App Protocol: </span>
+              <span class="p-value">{{event.network.applicationProtocol}}</span>
+            </div>
+          {{/if}}
+          {{#if event.network.ipProtocol}}
+            <div>
+              <span class="p-key">IP Protocol: </span>
+              <span class="p-value">{{event.network.ipProtocol}}</span>
+            </div>
+          {{/if}}
+          {{#if event.network.http}}
+            {{#if event.network.http.method}}
+              <div>
+                <span class="p-key">Method: </span>
+                <span class="p-value">{{event.network.http.method}}</span>
+              </div>
+            {{/if}}
+            {{#if event.network.http.responseCode}}
+              <div>
+                <span class="p-key">Response Code: </span>
+                <span class="p-value">{{event.network.http.responseCode}}</span>
+              </div>
+            {{/if}}
+          {{/if}}
+          {{#if (and event.network.dns event.network.dns.answers )}}
+            {{#each event.network.dns.answers as | dnsAnswer |}}
+              {{#if (and dnsAnswer.name dnsAnswer.data)}}
+                <div>
+                  <span class="p-key">DNS {{dnsAnswer.name}}: </span>
+                  <span class="p-value">{{dnsAnswer.data}}</span>
+                </div>
+              {{/if}}
+            {{/each}}
+          {{/if}}
+        {{/if}}
+      </div>
+    {{/each}}
+  {{else}}
+    <div class="alert alert-info mt-2" role="alert">
+      No Events Found
+    </div>
+  {{/if}}
+{{/if}}
+
+
+
+{{#if (eq activeTab "assets")}}
+  {{#if details.assetsLink}}
+    <div class="p-title">
+      <a class="p-link" href={{details.assetsLink}}>
+        View Assets in Chronicle
+        {{fa-icon "external-link-square" class="external-link-icon"}}
+      </a>
+    </div>
+  {{/if}}
+  {{#if details.assets.length}}
+    <h1 class="p-title">
+      {{fa-icon "info" fixedWidth=true}} Assets
+    </h1>
+    {{#each details.assets as | asset index |}}
+      {{#if (gt index 0)}}
+        <hr>
+      {{/if}}
+      <div class="mb-2">
+        {{#if asset.hostname}}
+          <div>
+            <span class="p-key">Host Name: </span>
+            <span class="p-value">{{asset.hostname}}</span>
+          </div>
+        {{/if}}
+        {{#if asset.firstSeenDomainName}}
+          <div>
+            <span class="p-key">First Seen Domain: </span>
+            <span class="p-value">{{asset.firstSeenDomainName}}</span>
+          </div>
+        {{/if}}
+        {{#if asset.firstSeenTime}}
+          <div>
+            <span class="p-key">First Seen Time: </span>
+            <span class="p-value">{{asset.firstSeenTime}}</span>
+          </div>
+        {{/if}}
+        {{#if asset.lastSeenDomainName}}
+          <div>
+            <span class="p-key">Last Seen Domain: </span>
+            <span class="p-value">{{asset.lastSeenDomainName}}</span>
+          </div>
+        {{/if}}
+        {{#if asset.lastSeenTime}}
+          <div>
+            <span class="p-key">Last Seen Time: </span>
+            <span class="p-value">{{asset.lastSeenTime}}</span>
+          </div>
+        {{/if}}
+      </div>
+    {{/each}}
+  {{else}}
+    <div class="alert alert-info mt-2" role="alert">
+      No Assets Found
+    </div>
+  {{/if}}
+{{/if}}
+
+
+
+{{#if (eq activeTab "iocDetails")}}
+  {{#if details.iocLink}}
+    <div class="p-title">
+      <a class="p-link" href={{details.iocLink}}>
+        View IOC Details in Chronicle
+        {{fa-icon "external-link-square" class="external-link-icon"}}
+      </a>
+    </div>
+  {{/if}}
+  {{#if details.iocSources.length}}
+    <h1 class="p-title">
+      {{fa-icon "info" fixedWidth=true}} IOC Details
+    </h1>
+    {{#each details.iocSources as | iocDetail index |}}
+      {{#if (gt index 0)}}
+        <hr>
+      {{/if}}
+      <div class="mb-2">
+        {{#if iocDetail.category}}
+          <div>
+            <span class="p-key">Category: </span>
+            <span class="p-value">{{iocDetail.category}}</span>
+          </div>
+        {{/if}}
+        {{#if iocDetail.confidenceScore}}
+          <div>
+            <span class="p-key">Confidence Score: </span>
+            <span class="p-value">{{iocDetail.confidenceScore}}</span>
+          </div>
+        {{/if}}
+        {{#if iocDetail.rawSeverity}}
+          <div>
+            <span class="p-key">Severity: </span>
+            <span class="p-value">{{iocDetail.rawSeverity}}</span>
+          </div>
+        {{/if}}
+        {{#if iocDetail.firstActiveTime}}
+          <div>
+            <span class="p-key">Severity: </span>
+            <span class="p-value">{{iocDetail.firstActiveTime}}</span>
+          </div>
+        {{/if}}
+        {{#if iocDetail.lastActiveTime}}
+          <div>
+            <span class="p-key">Severity: </span>
+            <span class="p-value">{{iocDetail.lastActiveTime}}</span>
+          </div>
+        {{/if}}
+        {{#if (and iocDetail.addresses iocDetail.addresses.length)}}
+          <h1 class="p-title">Addresses:</h1>
+          {{#each iocDetail.addresses as | address |}}
+            <div>
+              <span class="p-key">{{address.type}}: </span>
+              <span class="p-value">{{address.address}}</span>
+            </div>
+          {{/each}}
+        {{/if}}
+      </div>
+    {{/each}}
+  {{else}}
+    <div class="alert alert-info mt-2" role="alert">
+      No Assets Found
+    </div>
+  {{/if}}
+{{/if}}

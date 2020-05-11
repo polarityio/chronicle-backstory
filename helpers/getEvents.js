@@ -41,25 +41,32 @@ const getEvents = async (entityGroups, options, requestWithDefaults) =>
 
 
 const _formatEventList = (agg, eventList, entityValue) => {
-  const uri = eventList.uri && { eventLink: eventList.uri[0] };
+  const uri = eventList.uri && { eventsLink: eventList.uri[0] };
   
-  const events = eventList.events && {
-    events: eventList.events.map(
-      ({
-        metadata: {
-          eventTimestamp,
-          collectedTimestamp,
+  const events = eventList.events &&
+    eventList.events.length && {
+      events: eventList.events.map(
+        ({
+          metadata: { eventTimestamp, collectedTimestamp, eventType },
+          principal: { principalIp, ...principal },
+          target: { targetIp, ...target },
+          ...event
+        }) => ({
+          ...event,
           eventType,
-        },
-        ...event
-      }) => ({
-        ...event,
-        eventType,
-        eventTimestamp: moment(eventTimestamp).format('MMM DD YYYY, h:mm A'),
-        collectedTimestamp: moment(collectedTimestamp).format('MMM DD YYYY, h:mm A')
-      })
-    )
-  };
+          eventTimestamp: moment(eventTimestamp).format('MMM DD YYYY, h:mm A'),
+          collectedTimestamp: moment(collectedTimestamp).format('MMM DD YYYY, h:mm A'),
+          principal: {
+            ...principal,
+            ip: principalIp.join(', ')
+          },
+          target: {
+            ...target,
+            ip: targetIp.join(', ')
+          }
+        })
+      )
+    };
 
   return {
     ...agg,

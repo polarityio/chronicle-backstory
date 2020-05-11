@@ -45,28 +45,29 @@ const getIocDetails = (entityGroups, options, requestWithDefaults, Logger) =>
 const _formatIocDetails = (agg, iocDetails, entityValue) => {
   const uri = iocDetails.uri && { iocLink: iocDetails.uri[0] };
 
-  const iocSources = iocDetails.sources && {
-    iocSources: iocDetails.sources.map(
-      ({
-        confidenceScore: { strRawConfidenceScore: confidenceScore },
-        addresses,
-        firstActiveTime,
-        lastActiveTime,
-        ...source
-      }) => ({
-        ...source,
-        confidenceScore,
-        addresses: _.flatMap(addresses, (address) =>
-          _.map(address, (addressValue, addressKey) => [
-            _.startCase(addressKey),
-            _.isArray(addressValue) ? addressValue.join(', ') : addressValue
-          ])
-        ),
-        firstActiveTime: moment(firstActiveTime).format('MMM DD YYYY, h:mm A'),
-        lastActiveTime: moment(lastActiveTime).format('MMM DD YYYY, h:mm A')
-      })
-    )
-  };
+  const iocSources = iocDetails.sources &&
+    iocDetails.sources.length && {
+      iocSources: iocDetails.sources.map(
+        ({
+          confidenceScore: { strRawConfidenceScore: confidenceScore },
+          addresses,
+          firstActiveTime,
+          lastActiveTime,
+          ...source
+        }) => ({
+          ...source,
+          confidenceScore,
+          addresses: _.flatMap(addresses, (address) =>
+            _.map(address, (addressValue, addressKey) => ({
+              type: _.startCase(addressKey),
+              address: _.isArray(addressValue) ? addressValue.join(', ') : addressValue
+            }))
+          ),
+          firstActiveTime: moment(firstActiveTime).format('MMM DD YYYY, h:mm A'),
+          lastActiveTime: moment(lastActiveTime).format('MMM DD YYYY, h:mm A')
+        })
+      )
+    };
 
   return {
     ...agg,

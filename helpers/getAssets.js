@@ -41,29 +41,30 @@ const getAssets = async (entityGroups, options, requestWithDefaults) =>
 
 
 const _formatAssetList = (agg, assetList, entityValue) => {
-  const uri = assetList.uri && { assetLink: assetList.uri[0] };
+  const uri = assetList.uri && { assetsLink: assetList.uri[0] };
 
-  const assets = assetList.assets && {
-    assets: assetList.assets.map(
-      ({
-        asset: { hostname },
-        firstSeenArtifactInfo: {
-          artifactIndicator: { domainName: firstSeenDomainName },
-          seenTime: firstSeenTime
-        },
-        lastSeenArtifactInfo: {
-          artifactIndicator: { domainName: lastSeenDomainName },
-          seenTime: lastSeenTime
-        }
-      }) => ({
-        hostname,
-        firstSeenDomainName,
-        firstSeenTime: moment(firstSeenTime).format('MMM DD YYYY, h:mm A'),
-        lastSeenDomainName,
-        lastSeenTime: moment(lastSeenTime).format('MMM DD YYYY, h:mm A')
-      })
-    )
-  };
+  const assets = assetList.assets &&
+    assetList.assets.length && {
+      assets: assetList.assets.map(
+        ({
+          asset: { hostname },
+          firstSeenArtifactInfo: {
+            artifactIndicator: { domainName: firstSeenDomainName },
+            seenTime: firstSeenTime
+          },
+          lastSeenArtifactInfo: {
+            artifactIndicator: { domainName: lastSeenDomainName },
+            seenTime: lastSeenTime
+          }
+        }) => ({
+          hostname,
+          firstSeenDomainName,
+          firstSeenTime: moment(firstSeenTime).format('MMM DD YYYY, h:mm A'),
+          lastSeenDomainName,
+          lastSeenTime: moment(lastSeenTime).format('MMM DD YYYY, h:mm A')
+        })
+      )
+    };
 
   return {
     ...agg,
