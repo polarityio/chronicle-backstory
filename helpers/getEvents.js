@@ -71,14 +71,14 @@ const _formatEventList = (agg, eventList, entityValue) => {
               (!_.isEmpty(principal) && {
                 principal: {
                   ...principal,
-                  ip: principalIp.join(', ')
+                  ...(principalIp && { ip: principalIp.join(', ') })
                 }
               })),
             ...(targetIp ||
               (!_.isEmpty(target) && {
                 target: {
                   ...target,
-                  ip: targetIp.join(', ')
+                  ...(targetIp && { ip: targetIp.join(', ') })
                 }
               }))
           };
