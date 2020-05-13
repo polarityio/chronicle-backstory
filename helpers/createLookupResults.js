@@ -6,7 +6,10 @@ const createLookupResults = (entityGroups, iocDetailsMap, assetsMap, eventsMap) 
       const iocDetails = iocDetailsMap[entity.value];
       const assets = assetsMap[entity.value];
       const events = eventsMap[entity.value];
-      const resultsFound = iocDetails || assets || events;
+      const resultsFound =
+        (iocDetails && iocDetails.iocSources && iocDetails.iocSources.length) ||
+        (assets && assets.assets && assets.assets.length) ||
+        (events && events.events && events.events.length);
 
       return {
         entity,

@@ -45,35 +45,51 @@ const getIocDetails = (entityGroups, options, requestWithDefaults, Logger) =>
 const _formatIocDetails = (agg, iocDetails, entityValue) => {
   const uri = iocDetails.uri && { iocLink: iocDetails.uri[0] };
 
-  const iocSources = iocDetails.sources &&
-    iocDetails.sources.length && {
-      iocSources: iocDetails.sources.map(
-        ({
-          confidenceScore: { strRawConfidenceScore: confidenceScore },
-          addresses,
-          firstActiveTime,
-          lastActiveTime,
-          ...source
-        }) => ({
-          ...source,
-          confidenceScore,
-          addresses: _.flatMap(addresses, (address) =>
+  const iocSources = 
+    iocDetails.sources &&
+    iocDetails.sources.length && 
+    iocDetails.sources.map(
+      ({
+        confidenceScore: _confidenceScore,
+        addresses,
+        firstActiveTime,
+        lastActiveTime,
+        ...source
+      }) => {
+        const { strRawConfidenceScore: confidenceScore } = 
+          _confidenceScore || 
+          { strRawConfidenceScore: null };
+
+        const formattedAddresses = addresses && addresses.length && 
+          _.flatMap(addresses, (address) =>
             _.map(address, (addressValue, addressKey) => ({
               type: _.startCase(addressKey),
-              address: _.isArray(addressValue) ? addressValue.join(', ') : addressValue
+              address:
+                _.isArray(addressValue) && addressValue.length
+                  ? addressValue.join(', ')
+                  : addressValue
             }))
-          ),
-          firstActiveTime: moment(firstActiveTime).format('MMM DD YYYY, h:mm A'),
-          lastActiveTime: moment(lastActiveTime).format('MMM DD YYYY, h:mm A')
-        })
-      )
-    };
+          );
+
+        return {
+          ...source,
+          ...( confidenceScore && { confidenceScore }),
+          ...( formattedAddresses && { addresses: formattedAddresses }),
+          ...( firstActiveTime && {
+            firstActiveTime: moment(firstActiveTime).format('MMM DD YYYY, h:mm A')
+          }),
+          ...( lastActiveTime && {
+            lastActiveTime: moment(lastActiveTime).format('MMM DD YYYY, h:mm A')
+          })
+        };
+      }
+    ).filter(_.negate(_.isEmpty));
 
   return {
     ...agg,
     [entityValue]: {
       ...uri,
-      ...iocSources
+      ...(iocSources && iocSources.length && { iocSources })
     }
   };
 };

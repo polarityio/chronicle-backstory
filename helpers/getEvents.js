@@ -43,36 +43,54 @@ const getEvents = async (entityGroups, options, requestWithDefaults) =>
 const _formatEventList = (agg, eventList, entityValue) => {
   const uri = eventList.uri && { eventsLink: eventList.uri[0] };
   
-  const events = eventList.events &&
-    eventList.events.length && {
-      events: eventList.events.map(
-        ({
-          metadata: { eventTimestamp, collectedTimestamp, eventType },
-          principal: { principalIp, ...principal },
-          target: { targetIp, ...target },
-          ...event
-        }) => ({
-          ...event,
-          eventType,
-          eventTimestamp: moment(eventTimestamp).format('MMM DD YYYY, h:mm A'),
-          collectedTimestamp: moment(collectedTimestamp).format('MMM DD YYYY, h:mm A'),
-          principal: {
-            ...principal,
-            ip: principalIp.join(', ')
-          },
-          target: {
-            ...target,
-            ip: targetIp.join(', ')
-          }
-        })
+  const events =
+    eventList.events &&
+    eventList.events.length &&
+    eventList.events
+      .map(
+        ({ metadata: _metadata, principal: _principal, target: _target, ...event }) => {
+          const { eventTimestamp, collectedTimestamp, eventType } = _metadata || {
+            eventTimestamp: null,
+            collectedTimestamp: null,
+            eventType: null
+          };
+
+          const { principalIp, ...principal } = _principal || { principalIp: null };
+          const { targetIp, ...target } = _target || { targetIp: null };
+
+          return {
+            ...event,
+            ...(eventType && { eventType }),
+            ...(eventTimestamp && {
+              eventTimestamp: moment(eventTimestamp).format('MMM DD YYYY, h:mm A')
+            }),
+            ...(collectedTimestamp && {
+              collectedTimestamp: moment(collectedTimestamp).format('MMM DD YYYY, h:mm A')
+            }),
+            ...(principalIp ||
+              (!_.isEmpty(principal) && {
+                principal: {
+                  ...principal,
+                  ip: principalIp.join(', ')
+                }
+              })),
+            ...(targetIp ||
+              (!_.isEmpty(target) && {
+                target: {
+                  ...target,
+                  ip: targetIp.join(', ')
+                }
+              }))
+          };
+        }
       )
-    };
+      .filter(_.negate(_.isEmpty));
 
   return {
     ...agg,
     [entityValue]: {
       ...uri,
-      ...events
+      ...(events && events.length && { events })
     }
   };
 };
