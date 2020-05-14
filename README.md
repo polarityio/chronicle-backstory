@@ -28,6 +28,14 @@ The Issuer Email associated with your Google Service Account
 
 The Private Key associated with your Google Service Account
 
+### Ignore Asset Results
+
+Allows you to ignore results that only contain Asset data, while containing no Event or IOC data.
+> NOTE: This will not remove Assets from the results that do contain Event or IOC data'
+
+### Months Back
+
+The number of months you would like to look back for Events and Assets (decimals work as well, e.g. 0.25)
 
 ## Installation Instructions
 

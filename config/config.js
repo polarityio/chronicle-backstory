@@ -44,6 +44,16 @@ module.exports = {
       adminOnly: true
     },
     {
+      key: 'ignoreAssetResults',
+      name: 'Ignore Asset Results',
+      description:
+        'Allows you to ignore results that only contain Asset data, while containing no Event or IOC data. NOTE: This will not remove Assets from the results that do contain Event or IOC data',
+      default: false,
+      type: 'boolean',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
       key: 'monthsBack',
       name: 'Months Back',
       description:

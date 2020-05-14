@@ -24,7 +24,7 @@ const getLookupResults = (entities, options, requestWithDefaults, Logger) =>
         events: getEvents(entityGroups, options, requestWithDefaults, Logger)
       });
 
-      const lookupResults = createLookupResults(entityGroups, iocDetails, assets, events);
+      const lookupResults = createLookupResults(options, entityGroups, iocDetails, assets, events);
       
       Logger.trace({ iocDetails, assets, events, lookupResults }, 'Query Results');
 

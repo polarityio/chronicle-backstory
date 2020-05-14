@@ -1,15 +1,21 @@
 const _ = require('lodash');
 
-const createLookupResults = (entityGroups, iocDetailsMap, assetsMap, eventsMap) =>
+const createLookupResults = (options, entityGroups, iocDetailsMap, assetsMap, eventsMap) =>
   _.flatMap(entityGroups, (entityGroup, entityType) =>
     _.map(entityGroup, (entity) => {
       const iocDetails = iocDetailsMap[entity.value];
       const assets = assetsMap[entity.value];
       const events = eventsMap[entity.value];
+
+      const iocDetailsResultsFound =
+        iocDetails && iocDetails.iocSources && iocDetails.iocSources.length;
+      const assetResultsFound = assets && assets.assets && assets.assets.length;
+      const eventResultsFound = events && events.events && events.events.length;
+
       const resultsFound =
-        (iocDetails && iocDetails.iocSources && iocDetails.iocSources.length) ||
-        (assets && assets.assets && assets.assets.length) ||
-        (events && events.events && events.events.length);
+        (!options.ignoreAssetResults && assetResultsFound) ||
+        iocDetailsResultsFound ||
+        eventResultsFound;
 
       return {
         entity,
@@ -47,7 +53,6 @@ const _createSummary = (iocDetails, assets, events) => {
   return _.chain([iocDetailsTags, assetsTags, eventsTags])
     .flatten()
     .compact()
-    .thru((tags) => tags.length === 1 && tags[0].startsWith('# of Assets: ') ? [] : tags)
     .value();
 };
 
