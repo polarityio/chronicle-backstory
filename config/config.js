@@ -1,6 +1,6 @@
 module.exports = {
   name: 'Chronicle Backstory',
-  acronym: 'CB',
+  acronym: 'CHBS',
   description:
     'Chronicle Backstory combines intelligence about global threats in the wild, threats inside your network, and unique signals about both.',
   entityTypes: ['IPv4', 'IPv6', 'domain', 'MAC', 'hash'],

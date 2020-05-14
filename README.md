@@ -15,10 +15,10 @@ Polarity's Chronicle Backstory integration allows automated queries to the Event
 </div>
 
 
-To learn more about Demisto, visit the [official website](https://www.demisto.com/).
+To learn more about Chronicle Backstory, visit the [official website]([https://chronicle.security](https://chronicle.security/products/platform/)).
 
 
-## Demisto Integration Options
+## Chronicle Backstory Integration Options
 
 ### Issuer Email
 
