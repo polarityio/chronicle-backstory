@@ -32,16 +32,22 @@ const _createSummary = (iocDetails, assets, events) => {
     iocDetails &&
     iocDetails.iocSources &&
     _.compact([
-      iocDetails.iocSources[0].confidenceScore && `Confidence: ${iocDetails.iocSources[0].confidenceScore}`,
-      iocDetails.iocSources[0].category && `Category: ${iocDetails.iocSources[0].category}`,
+      iocDetails.iocSources[0].confidenceScore &&
+        `Confidence: ${iocDetails.iocSources[0].confidenceScore}`,
+      iocDetails.iocSources[0].category &&
+        `Category: ${iocDetails.iocSources[0].category}`,
+      iocDetails.iocSources[0].category &&
+        `Severity: ${iocDetails.iocSources[0].rawSeverity}`,
       `# of IOC: ${iocDetails.iocSources.length}`
     ]);
+
   const assetsTags = assets && assets.assets && `# of Assets: ${assets.assets.length}`;
   const eventsTags = events && events.events && `# of Events: ${events.events.length}`;
 
   return _.chain([iocDetailsTags, assetsTags, eventsTags])
     .flatten()
     .compact()
+    .thru((tags) => tags.length === 1 && tags[0].startsWith('# of Assets: ') ? [] : tags)
     .value();
 };
 
