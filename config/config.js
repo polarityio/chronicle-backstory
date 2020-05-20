@@ -1,11 +1,10 @@
 module.exports = {
   name: 'Chronicle Backstory',
-  acronym: 'CB',
+  acronym: 'CHBS',
   description:
     'Chronicle Backstory combines intelligence about global threats in the wild, threats inside your network, and unique signals about both.',
-  entityTypes: ['IPv4', 'IPv6', 'hash', 'domain', 'email'],
+  entityTypes: ['IPv4', 'IPv6', 'domain', 'MAC', 'hash'],
   styles: ['./styles/styles.less'],
-  // onDemandOnly: true,
   block: {
     component: {
       file: './components/block.js'
@@ -43,6 +42,26 @@ module.exports = {
       type: 'password',
       userCanEdit: false,
       adminOnly: true
+    },
+    {
+      key: 'ignoreAssetResults',
+      name: 'Ignore Asset Results',
+      description:
+        'Allows you to ignore results that only contain Asset data, while containing no Event or IOC data. NOTE: This will not remove Assets from the results that do contain Event or IOC data',
+      default: false,
+      type: 'boolean',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'monthsBack',
+      name: 'Months Back',
+      description:
+        'The number of months you would like to look back for violations (decimals work as well, e.g. 0.25)',
+      default: 6,
+      type: 'number',
+      userCanEdit: true,
+      adminOnly: false
     }
   ]
 };
