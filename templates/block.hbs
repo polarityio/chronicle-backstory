@@ -27,9 +27,6 @@
   {{/if}}
 
   {{#if details.events.length}}
-    <h1 class="p-title">
-      {{fa-icon "info" fixedWidth=true}} Events
-    </h1>
     {{#each details.events as | event index |}}
       {{#if (gt index 0)}}
         <hr>
@@ -48,7 +45,7 @@
           </div>
         {{/if}}
         {{#if (and event.principal (or event.principal.hostname event.principal.ip event.principal.url))}}
-          <h1 class="p-title">Principal Info:</h1>
+          <h1 class="p-title">Principal Info</h1>
           {{#if event.principal.hostname}}
             <div>
               <span class="p-key">Host Name: </span>
@@ -69,7 +66,7 @@
           {{/if}}
         {{/if}}
         {{#if (and event.target (or event.target.hostname event.target.ip event.target.url))}}
-          <h1 class="p-title">Target Info:</h1>
+          <h1 class="p-title">Target Info</h1>
           {{#if event.target.hostname}}
             <div>
               <span class="p-key">Host Name: </span>
@@ -90,7 +87,7 @@
           {{/if}}
         {{/if}}
         {{#if (and event.network (or event.network.applicationProtocol event.network.ipProtocol event.network.http))}}
-          <h1 class="p-title">Network Info:</h1>
+          <h1 class="p-title">Network Info</h1>
           {{#if event.network.applicationProtocol}}
             <div>
               <span class="p-key">App Protocol: </span>
@@ -114,6 +111,12 @@
               <div>
                 <span class="p-key">Response Code: </span>
                 <span class="p-value">{{event.network.http.responseCode}}</span>
+              </div>
+            {{/if}}
+            {{#if event.network.http.userAgent}}
+              <div>
+                <span class="p-key">User Agent: </span>
+                <span class="p-value">{{event.network.http.userAgent}}</span>
               </div>
             {{/if}}
           {{/if}}
@@ -149,9 +152,6 @@
     </div>
   {{/if}}
   {{#if details.assets.length}}
-    <h1 class="p-title">
-      {{fa-icon "info" fixedWidth=true}} Assets
-    </h1>
     {{#each details.assets as | asset index |}}
       {{#if (gt index 0)}}
         <hr>
@@ -247,7 +247,7 @@
           </div>
         {{/if}}
         {{#if (and iocDetail.addresses iocDetail.addresses.length)}}
-          <h1 class="p-title">Addresses:</h1>
+          <h1 class="p-title">Addresses</h1>
           {{#each iocDetail.addresses as | address |}}
             <div>
               <span class="p-key">{{address.type}}: </span>
