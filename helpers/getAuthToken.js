@@ -1,9 +1,18 @@
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 
+const NodeCache = require('node-cache');
+
+const cache = new NodeCache({
+  stdTTL: 59 * 60
+});
+
 const getAuthToken = async ({ issuerEmail, privateKey }, requestWithDefaults, Logger) => {
   const processedPrivateKey = _processPrivateKey(privateKey);
+  const cachedAccessToken = cache.get(`${issuerEmail}${processedPrivateKey}`);
   
+  if (cachedAccessToken) return cachedAccessToken;
+
   let createdAndSignedJWT;
   try {
     createdAndSignedJWT = jwt.sign(
@@ -30,6 +39,9 @@ const getAuthToken = async ({ issuerEmail, privateKey }, requestWithDefaults, Lo
     body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${createdAndSignedJWT}`
   });
 
+  if (body.access_token)
+    cache.set(`${issuerEmail}${processedPrivateKey}`, body.access_token);
+  
   return body.access_token;
 };
 
