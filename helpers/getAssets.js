@@ -20,7 +20,7 @@ const getAssets = async (entityGroups, options, requestWithDefaults) =>
               options,
               qs: {
                 [`artifact.${ASSET_ARTIFACT_TYPES[entityType]}`]: entity.value,
-                page_size: 50,
+                page_size: 25,
                 ...generateTimes(options)
               }
             });
@@ -43,9 +43,9 @@ const getAssets = async (entityGroups, options, requestWithDefaults) =>
 const _formatAssetList = (agg, assetList, entityValue) => {
   const uri = assetList.uri && { assetsLink: assetList.uri[0] };
 
-  const assets = 
+  const assets =
     assetList.assets &&
-    assetList.assets.length && 
+    assetList.assets.length &&
     assetList.assets.map(
       ({
         asset,
@@ -62,7 +62,7 @@ const _formatAssetList = (agg, assetList, entityValue) => {
         const { domainName: firstSeenDomainName } = firstArtifactIndicator || {
           domainName: null
         };
-        
+
         const {
           artifactIndicator: lastArtifactIndicator,
           seenTime: lastSeenTime

@@ -20,7 +20,7 @@ const getEvents = async (entityGroups, options, requestWithDefaults) =>
               options,
               qs: {
                 [`asset.${EVENT_INDICATOR_TYPES[entityType]}`]: entity.value,
-                page_size: 50,
+                page_size: 25,
                 ...generateTimes(options, 'Event')
               }
             });
@@ -42,7 +42,7 @@ const getEvents = async (entityGroups, options, requestWithDefaults) =>
 
 const _formatEventList = (agg, eventList, entityValue) => {
   const uri = eventList.uri && { eventsLink: eventList.uri[0] };
-  
+
   const events =
     eventList.events &&
     eventList.events.length &&
