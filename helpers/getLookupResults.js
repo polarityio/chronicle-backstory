@@ -1,47 +1,38 @@
-const _ = require('lodash');
+const {
+  _P,
+  partitionFlatMap,
+  splitOutIgnoredIps,
+  groupEntities
+} = require('./dataTransformations');
 
-const { IGNORED_IPS } = require('./constants');
-
-const { _partitionFlatMap } = require('./dataTransformations');
+const getIocDetails = require('./getIocDetails');
+const getAssets = require('./getAssets');
+const getEvents = require('./getEvents');
+const createLookupResults = require('./createLookupResults');
 
 const getLookupResults = (entities, options, requestWithDefaults, Logger) =>
-  _partitionFlatMap(
+  partitionFlatMap(
     async (_entitiesPartition) => {
-      const { entitiesPartition, ignoredIpLookupResults } = _splitOutIgnoredIps(
+      const { entitiesPartition, ignoredIpLookupResults } = splitOutIgnoredIps(
         _entitiesPartition
       );
+      const entityGroups = groupEntities(entitiesPartition, options);
 
-      const listalerts = await requestWithDefaults({
-        url: 'https://backstory.googleapis.com/v1/alert/listalerts',
-        options,
-        qs: {
-          start_time: '2010-12-31T23:59:59.999999999Z',
-          end_time: '2020-12-31T23:59:59.999999999Z',
-          page_size: '50'
-        }
+      const { iocDetails, assets, events } = await _P.parallel({
+        iocDetails: getIocDetails(entityGroups, options, requestWithDefaults, Logger),
+        assets: getAssets(entityGroups, options, requestWithDefaults, Logger),
+        events: getEvents(entityGroups, options, requestWithDefaults, Logger)
       });
 
-      Logger.trace({ listalerts }, 'List Alerts example request');
+      const lookupResults = createLookupResults(options, entityGroups, iocDetails, assets, events);
+      
+      Logger.trace({ iocDetails, assets, events, lookupResults }, 'Query Results');
 
-      const lookupResults = [];
       return lookupResults.concat(ignoredIpLookupResults);
     },
     20,
     entities
   );
-
-const _splitOutIgnoredIps = (_entitiesPartition) => {
-  const { ignoredIPs, entitiesPartition } = _.groupBy(
-    _entitiesPartition,
-    ({ isIP, value }) =>
-      !isIP || (isIP && !IGNORED_IPS.has(value)) ? 'entitiesPartition' : 'ignoredIPs'
-  );
-
-  return {
-    entitiesPartition,
-    ignoredIpLookupResults: _.map(ignoredIPs, (entity) => ({ entity, data: null }))
-  };
-};
 
 module.exports = {
   getLookupResults
