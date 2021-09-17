@@ -71,7 +71,8 @@ const createRequestWithDefaults = (Logger) => {
       ...requestOptions,
       headers: {
         ...requestOptions.headers,
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        Host: requestOptions.options.domain
       }
     };
   };
