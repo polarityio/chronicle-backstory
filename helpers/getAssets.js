@@ -16,7 +16,7 @@ const getAssets = async (entityGroups, options, requestWithDefaults) =>
           entityGroup,
           async (agg, entity) => {
             const { body: assetList } = await requestWithDefaults({
-              url: 'https://backstory.googleapis.com/v1/artifact/listassets',
+              url: `https://${options.domain}/v1/artifact/listassets`,
               options,
               qs: {
                 [`artifact.${ASSET_ARTIFACT_TYPES[entityType]}`]: entity.value,

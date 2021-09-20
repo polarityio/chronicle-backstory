@@ -19,7 +19,7 @@ const getIocDetails = (entityGroups, options, requestWithDefaults, Logger) =>
           entityGroup,
           async (agg, entity) => {
             const { body: iocDetails } = await requestWithDefaults({
-              url: 'https://backstory.googleapis.com/v1/artifact/listiocdetails',
+              url: `https://${options.domain}/v1/artifact/listiocdetails`,
               options,
               qs: {
                 [`artifact.${IOC_ARTIFACT_TYPES[entityType]}`]: entity.value

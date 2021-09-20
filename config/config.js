@@ -4,6 +4,7 @@ module.exports = {
   description:
     'Chronicle Backstory combines intelligence about global threats in the wild, threats inside your network, and unique signals about both.',
   entityTypes: ['IPv4', 'IPv6', 'domain', 'MAC', 'hash'],
+  defaultColor: 'light-purple',
   styles: ['./styles/styles.less'],
   block: {
     component: {
@@ -25,6 +26,16 @@ module.exports = {
     level: 'info' //trace, debug, info, warn, error, fatal
   },
   options: [
+    {
+      key: 'domain',
+      name: 'Chronicle Domain',
+      description:
+        'The domain you use for accessing Chronicle Backstory.  This does not include the full URL or "http(s)://" but can include your regional subdomain.',
+      default: 'backstory.googleapis.com',
+      type: 'text',
+      userCanEdit: true,
+      adminOnly: false
+    },
     {
       key: 'issuerEmail',
       name: 'Issuer Email',
@@ -57,7 +68,7 @@ module.exports = {
       key: 'monthsBack',
       name: 'Months Back',
       description:
-        'The number of months you would like to look back for violations (decimals work as well, e.g. 0.25)',
+        'The number of months you would like to look back for Events and Assets  (decimals work as well, e.g. 0.25)',
       default: 6,
       type: 'number',
       userCanEdit: true,

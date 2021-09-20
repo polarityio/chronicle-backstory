@@ -20,21 +20,20 @@ To learn more about Chronicle Backstory, visit the [official website]([https://c
 
 ## Chronicle Backstory Integration Options
 
-### Issuer Email
+### Chronicle Domain
+The domain you use for accessing Chronicle Backstory.  This does not include the full URL or "http(s)://" but can include your regional subdomain.
 
+### Issuer Email
 The Issuer Email associated with your Google Service Account
 
 ### Private Key
-
 The Private Key associated with your Google Service Account
 
 ### Ignore Asset Results
-
-Allows you to ignore results that only contain Asset data, while containing no Event or IOC data.
-> NOTE: This will not remove Assets from the results that do contain Event or IOC data'
+Allows you to ignore results that only contain Asset data, while containing no Event or IOC data. 
+> NOTE: This will not remove Assets from the results that do contain Event or IOC data
 
 ### Months Back
-
 The number of months you would like to look back for Events and Assets (decimals work as well, e.g. 0.25)
 
 

@@ -16,7 +16,7 @@ const getEvents = async (entityGroups, options, requestWithDefaults) =>
           entityGroup,
           async (agg, entity) => {
             const { body: eventList } = await requestWithDefaults({
-              url: 'https://backstory.googleapis.com/v1/asset/listevents',
+              url: `https://${options.domain}/v1/asset/listevents`,
               options,
               qs: {
                 [`asset.${EVENT_INDICATOR_TYPES[entityType]}`]: entity.value,

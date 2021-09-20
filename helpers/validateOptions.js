@@ -2,6 +2,7 @@ const _ = require("lodash");
 
 const validateOptions = (options, callback) => {
   const stringOptionsErrorMessages = {
+    domain: 'You must provide a valid Chronicle Domain for your Chronicle Backstory instance',
     issuerEmail: 'You must provide a valid Issuer Email from your Google Service Account',
     privateKey: 'You must provide a valid Private Key from your Google Service Account'
   };

@@ -74,7 +74,7 @@ const createRequestWithDefaults = (Logger) => {
       headers: {
         ...requestOptions.headers,
         Authorization: `Bearer ${token}`,
-        Host: 'backstory.googleapis.com'
+        Host: requestOptions.options.domain
       }
     };
   };
