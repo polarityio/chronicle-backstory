@@ -8,9 +8,9 @@
   "dependencies": {
     "aigle": "^1.14.1",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.21",
-    "moment": "^2.29.1",
-    "node-cache": "^4.2.1",
-    "request": "^2.88.2"
+    "lodash": "^4.17.15",
+    "moment": "^2.29.3",
+    "node-cache": "^4.2.0",
+    "postman-request": "^2.88.1-postman.31"
   }
 }

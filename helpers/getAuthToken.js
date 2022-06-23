@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const { parseErrorToReadableJSON } = require('./dataTransformations');
+
 
 const NodeCache = require('node-cache');
 
@@ -24,10 +26,11 @@ const getAuthToken = async ({ issuerEmail, privateKey }, requestWithDefaults, Lo
       processedPrivateKey,
       { algorithm: 'RS256', expiresIn: '1h' }
     );
-  } catch (e) {
-    e.status = "jwtCreationError"
-    Logger.error({ error: e }, 'Error Creating JWT');
-    throw e
+  } catch (error) {
+    error.status = "jwtCreationError"
+    const err = parseErrorToReadableJSON(error);
+    Logger.error({ error, formattedError: err }, 'Error Creating JWT');
+    throw error
   }
 
   const { body } = await requestWithDefaults({

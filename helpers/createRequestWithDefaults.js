@@ -1,14 +1,18 @@
 const fs = require("fs");
-const request = require("request");
-const { promisify } = require("util");
+const { identity } = require("lodash/fp");
+const request = require("postman-request");
 
 const config = require("../config/config");
 
 const getAuthToken = require('./getAuthToken');
+const { parseErrorToReadableJSON } = require('./dataTransformations');
 const { checkForInternalServiceError } = require('./handleError');
 
 const _configFieldIsValid = (field) =>
   typeof field === "string" && field.length > 0;
+
+const SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES = [200];
+
 
 const createRequestWithDefaults = (Logger) => {
   const {
@@ -26,35 +30,49 @@ const createRequestWithDefaults = (Logger) => {
   };
 
   const requestWithDefaults = (
-    preRequestFunction = () => ({}),
-    postRequestSuccessFunction = (x) => x,
-    postRequestFailureFunction = (e) => { throw e; }
-  ) => async ({ json: bodyWillBeJSON, ...requestOptions }) => {
-    const _requestWithDefault = promisify(request.defaults(defaults));
-    const preRequestFunctionResults = await preRequestFunction(requestOptions);
-    const _requestOptions = {
-      ...requestOptions,
-      ...preRequestFunctionResults,
-    };
-
-    let postRequestFunctionResults;
-    try {
-      const { body, ...result } = await _requestWithDefault(_requestOptions);
-
-      checkForStatusError({ body, ...result });
-
-      postRequestFunctionResults = await postRequestSuccessFunction({
-        ...result,
-        body: bodyWillBeJSON ? JSON.parse(body) : body,
-      });
-    } catch (error) {
-      postRequestFunctionResults = await postRequestFailureFunction(
-        error,
-        _requestOptions
-      );
+    preRequestFunction = async () => ({}),
+    postRequestSuccessFunction = async (x) => x,
+    postRequestFailureFunction = async (e) => {
+      throw e;
     }
+  ) => {
+    const defaultsRequest = request.defaults(defaults);
 
-    return postRequestFunctionResults;
+    const _requestWithDefault = (requestOptions) =>
+      new Promise((resolve, reject) => {
+        defaultsRequest(requestOptions, (err, res, body) => {
+          if (err) return reject(err);
+          resolve({ ...res, body });
+        });
+      });
+
+    return async ({ json: bodyWillBeJSON, ...requestOptions }) => {
+      const preRequestFunctionResults = await preRequestFunction(requestOptions);
+      const _requestOptions = {
+        ...requestOptions,
+        ...preRequestFunctionResults
+      };
+
+      let postRequestFunctionResults;
+      try {
+        const result = await _requestWithDefault(_requestOptions);
+        checkForStatusError(result, _requestOptions);
+
+        postRequestFunctionResults = await postRequestSuccessFunction(
+          {
+            ...result,
+            body: (bodyWillBeJSON ? JSON.parse : identity)(result.body)
+          },
+          _requestOptions
+        );
+      } catch (error) {
+        postRequestFunctionResults = await postRequestFailureFunction(
+          error,
+          _requestOptions
+        );
+      }
+      return postRequestFunctionResults;
+    };
   };
 
   const handleAuth = async (requestOptions) => {
@@ -63,7 +81,9 @@ const createRequestWithDefaults = (Logger) => {
       requestWithDefaults(),
       Logger
     ).catch((error) => {
-      Logger.error({ error }, 'Unable to retrieve Auth Token');
+      const err = parseErrorToReadableJSON(error);
+      //TODO: test logs by messing up keys and setting logging level to trace
+      Logger.error({ error, formattedError: err }, 'Unable to retrieve Auth Token');
       throw error;
     });
 
@@ -73,24 +93,40 @@ const createRequestWithDefaults = (Logger) => {
       ...requestOptions,
       headers: {
         ...requestOptions.headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: token ? `Bearer ${token}` : "Authentication Failed.  Check Logs for more information.",
         Host: requestOptions.options.domain
       }
     };
   };
 
   const checkForStatusError = ({ statusCode, body }, requestOptions) => {
+    const requestOptionsWithoutSensitiveData = {
+      ...requestOptions,
+      options: '************'
+    };
+
+    Logger.trace({
+      MESSAGE: 'checkForStatusError',
+      statusCode,
+      requestOptions: requestOptionsWithoutSensitiveData,
+      body
+    });
+
     checkForInternalServiceError(statusCode, body);
-    if (Math.round(statusCode / 100) * 100 !== 200) {
-      const requestError = Error("Request Error");
+
+    const roundedStatus = Math.round(statusCode / 100) * 100;
+    if (!SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES.includes(roundedStatus)) {
+      const requestError = Error('Request Error');
       requestError.status = statusCode;
-      requestError.description = body;
-      requestError.requestOptions = requestOptions;
+      requestError.description = JSON.stringify(body);
+      requestError.requestOptions = JSON.stringify(requestOptionsWithoutSensitiveData);
       throw requestError;
     }
   };
 
-  return requestWithDefaults(handleAuth);
+  const requestDefaultsWithInterceptors = requestWithDefaults(handleAuth);
+
+  return requestDefaultsWithInterceptors;
 };
 
 module.exports = createRequestWithDefaults;

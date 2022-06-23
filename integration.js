@@ -2,6 +2,7 @@
 
 const validateOptions = require('./helpers/validateOptions');
 const createRequestWithDefaults = require('./helpers/createRequestWithDefaults');
+const { parseErrorToReadableJSON } = require('./helpers/dataTransformations');
 
 const { handleError } = require('./helpers/handleError');
 const { getLookupResults } = require('./helpers/getLookupResults');
@@ -25,7 +26,8 @@ const doLookup = async (entities, options, cb) => {
       Logger
     );
   } catch (error) {
-    Logger.error({ error }, 'Get Lookup Results Failed');
+    const err = parseErrorToReadableJSON(error)
+    Logger.error({ error, formattedError: err }, 'Get Lookup Results Failed');
     return cb(handleError(error));
   }
   

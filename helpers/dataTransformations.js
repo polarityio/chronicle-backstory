@@ -64,11 +64,16 @@ const generateTimes = ({ monthsBack }, queryingEvents = false) => {
   };
 };
 
+
+const parseErrorToReadableJSON = (error) =>
+  JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+
 module.exports = {
   _P,
   partitionFlatMap,
   getKeys,
   groupEntities,
   splitOutIgnoredIps,
-  generateTimes
+  generateTimes,
+  parseErrorToReadableJSON
 };
