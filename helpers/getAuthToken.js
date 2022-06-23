@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+
+const config = require('../config/config');
 const { parseErrorToReadableJSON } = require('./dataTransformations');
 
 
 const NodeCache = require('node-cache');
-
 const cache = new NodeCache({
   stdTTL: 59 * 60
 });
@@ -12,25 +13,27 @@ const cache = new NodeCache({
 const getAuthToken = async ({ issuerEmail, privateKey }, requestWithDefaults, Logger) => {
   const processedPrivateKey = _processPrivateKey(privateKey);
   const cachedAccessToken = cache.get(`${issuerEmail}${processedPrivateKey}`);
-  
+
   if (cachedAccessToken) return cachedAccessToken;
 
   let createdAndSignedJWT;
   try {
+    const { request: { passphrase } } = config;
+
     createdAndSignedJWT = jwt.sign(
       {
-        iss: issuerEmail, 
+        iss: issuerEmail,
         scope: 'https://www.googleapis.com/auth/chronicle-backstory',
         aud: 'https://oauth2.googleapis.com/token'
       },
-      processedPrivateKey,
+      passphrase ? { key: processedPrivateKey, passphrase } : processedPrivateKey,
       { algorithm: 'RS256', expiresIn: '1h' }
     );
   } catch (error) {
-    error.status = "jwtCreationError"
+    error.status = 'jwtCreationError';
     const err = parseErrorToReadableJSON(error);
     Logger.error({ error, formattedError: err }, 'Error Creating JWT');
-    throw error
+    throw error;
   }
 
   const { body } = await requestWithDefaults({
@@ -44,7 +47,7 @@ const getAuthToken = async ({ issuerEmail, privateKey }, requestWithDefaults, Lo
 
   if (body.access_token)
     cache.set(`${issuerEmail}${processedPrivateKey}`, body.access_token);
-  
+
   return body.access_token;
 };
 
@@ -63,6 +66,4 @@ const _processPrivateKey = (privateKey) =>
     )
     .value();
 
-
 module.exports = getAuthToken;
-
