@@ -82,7 +82,6 @@ const createRequestWithDefaults = (Logger) => {
       Logger
     ).catch((error) => {
       const err = parseErrorToReadableJSON(error);
-      //TODO: test logs by messing up keys and setting logging level to trace
       Logger.error({ error, formattedError: err }, 'Unable to retrieve Auth Token');
       throw error;
     });
