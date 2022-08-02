@@ -23,13 +23,13 @@ const getKeys = (keys, items) =>
 
 const groupEntities = (entities) =>
   _.chain(entities)
-    .groupBy(({ isIP, isDomain, type }) =>
+    .groupBy(({ isIP, isDomain, type, isSHA256, isSHA1, isMD5 }) =>
       isIP ? "ip" : 
       isDomain ? "domain" : 
-      type === "MAC" ? "mac" : 
-      type === "MD5" ? "md5" : 
-      type === "SHA1" ? "sha1" : 
-      type === "SHA256" ? "sha256" : 
+      type === "MAC" ? "mac" :
+      isMD5 ? "md5" :
+      isSHA1 ? "sha1" :
+      isSHA256 ? "sha256" :
       "unknown"
     )
     .omit("unknown")
