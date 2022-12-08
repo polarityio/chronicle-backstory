@@ -45,54 +45,59 @@ const getIocDetails = (entityGroups, options, requestWithDefaults, Logger) =>
 const _formatIocDetails = (agg, iocDetails, entityValue) => {
   const uri = iocDetails.uri && { iocLink: iocDetails.uri[0] };
 
-  const iocSources = 
+  const iocSources =
     iocDetails.sources &&
-    iocDetails.sources.length && 
-    iocDetails.sources.map(
-      ({
-        confidenceScore: _confidenceScore,
-        addresses,
-        firstActiveTime,
-        lastActiveTime,
-        ...source
-      }) => {
-        const { strRawConfidenceScore: confidenceScore } = 
-          _confidenceScore || 
-          { strRawConfidenceScore: null };
+    iocDetails.sources.length &&
+    iocDetails.sources
+      .map(
+        ({
+          confidenceScore: _confidenceScore,
+          addresses,
+          firstActiveTime,
+          lastActiveTime,
+          ...source
+        }) => {
+          const { strRawConfidenceScore: confidenceScore } = _confidenceScore || {
+            strRawConfidenceScore: null
+          };
 
-        const formattedAddresses = addresses && addresses.length && 
-          _.flatMap(addresses, (address) =>
-            _.map(address, (addressValue, addressKey) => ({
-              type: _.startCase(addressKey),
-              address:
-                _.isArray(addressValue) && addressValue.length
-                  ? addressValue.join(', ')
-                  : addressValue
-            }))
-          );
+          const formattedAddresses =
+            addresses &&
+            addresses.length &&
+            _.flatMap(addresses, (address) =>
+              _.map(address, (addressValue, addressKey) => ({
+                type: _.startCase(addressKey),
+                address:
+                  _.isArray(addressValue) && addressValue.length
+                    ? addressValue.join(', ')
+                    : addressValue
+              }))
+            );
 
-        return {
-          ...source,
-          ...( confidenceScore && { confidenceScore }),
-          ...( formattedAddresses && { addresses: formattedAddresses }),
-          ...( firstActiveTime && {
-            firstActiveTime: moment(firstActiveTime).format('MMM DD YYYY, h:mm A')
-          }),
-          ...( lastActiveTime && {
-            lastActiveTime: moment(lastActiveTime).format('MMM DD YYYY, h:mm A')
-          })
-        };
-      }
-    ).filter(_.negate(_.isEmpty));
+          return {
+            ...source,
+            ...(confidenceScore && { confidenceScore }),
+            ...(formattedAddresses && { addresses: formattedAddresses }),
+            ...(firstActiveTime && {
+              firstActiveTime: moment(firstActiveTime).format('MMM DD YYYY, h:mm A')
+            }),
+            ...(lastActiveTime && {
+              lastActiveTime: moment(lastActiveTime).format('MMM DD YYYY, h:mm A')
+            })
+          };
+        }
+      )
+      .filter(_.negate(_.isEmpty));
 
   return {
     ...agg,
     [entityValue]: {
       ...uri,
-      ...(iocSources && iocSources.length && { iocSources })
+      // Return empty array if there are no events found.  Note that this allows us to differentiate between
+      // not having searched events and not having any events.
+      ...(iocSources && iocSources.length ? { iocSources } : { iocSources: [] })
     }
   };
 };
-
 
 module.exports = getIocDetails;

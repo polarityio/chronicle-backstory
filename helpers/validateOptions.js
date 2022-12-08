@@ -1,8 +1,9 @@
-const _ = require("lodash");
+const _ = require('lodash');
 
 const validateOptions = (options, callback) => {
   const stringOptionsErrorMessages = {
-    domain: 'You must provide a valid Chronicle Domain for your Chronicle Backstory instance',
+    domain:
+      'You must provide a valid Chronicle Domain for your Chronicle Backstory instance',
     issuerEmail: 'You must provide a valid Issuer Email from your Google Service Account',
     privateKey: 'You must provide a valid Private Key from your Google Service Account'
   };
@@ -11,6 +12,13 @@ const validateOptions = (options, callback) => {
     stringOptionsErrorMessages,
     options
   );
+
+  if (options.sourcesToSearch.value.length === 0) {
+    stringValidationErrors.push({
+      key: 'sourcesToSearch',
+      message: 'You must select at least one source to search.'
+    });
+  }
 
   callback(null, stringValidationErrors);
 };
@@ -31,6 +39,5 @@ const _validateStringOptions = (stringOptionsErrorMessages, options, otherErrors
     },
     otherErrors
   );
-
 
 module.exports = validateOptions;

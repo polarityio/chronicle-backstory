@@ -65,6 +65,43 @@ module.exports = {
       adminOnly: false
     },
     {
+      key: 'sourcesToSearch',
+      name: 'Sources to Search',
+      description: 'Select one or more data sources to search.',
+      default: [
+        {
+          value: 'events',
+          display: 'Events'
+        },
+        {
+          value: 'iocDetails',
+          display: 'IOCs'
+        },
+        {
+          value: 'assets',
+          display: 'Assets'
+        }
+      ],
+      options: [
+        {
+          value: 'events',
+          display: 'Events'
+        },
+        {
+          value: 'iocDetails',
+          display: 'IOCs'
+        },
+        {
+          value: 'assets',
+          display: 'Assets'
+        }
+      ],
+      type: 'select',
+      multiple: true,
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
       key: 'monthsBack',
       name: 'Months Back',
       description:

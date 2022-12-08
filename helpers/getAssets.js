@@ -39,34 +39,25 @@ const getAssets = async (entityGroups, options, requestWithDefaults) =>
     )
     .value();
 
-
 const _formatAssetList = (agg, assetList, entityValue) => {
   const uri = assetList.uri && { assetsLink: assetList.uri[0] };
 
   const assets =
     assetList.assets &&
     assetList.assets.length &&
-    assetList.assets.map(
-      ({
-        asset,
-        firstSeenArtifactInfo,
-        lastSeenArtifactInfo
-      }) => {
+    assetList.assets
+      .map(({ asset, firstSeenArtifactInfo, lastSeenArtifactInfo }) => {
         const { hostname } = asset || { hostname: null };
 
-        const {
-          artifactIndicator: firstArtifactIndicator,
-          seenTime: firstSeenTime
-        } = firstSeenArtifactInfo || { artifactIndicator: null, seenTime: null };
+        const { artifactIndicator: firstArtifactIndicator, seenTime: firstSeenTime } =
+          firstSeenArtifactInfo || { artifactIndicator: null, seenTime: null };
 
         const { domainName: firstSeenDomainName } = firstArtifactIndicator || {
           domainName: null
         };
 
-        const {
-          artifactIndicator: lastArtifactIndicator,
-          seenTime: lastSeenTime
-        } = lastSeenArtifactInfo || { artifactIndicator: null, seenTime: null };
+        const { artifactIndicator: lastArtifactIndicator, seenTime: lastSeenTime } =
+          lastSeenArtifactInfo || { artifactIndicator: null, seenTime: null };
 
         const { domainName: lastSeenDomainName } = lastArtifactIndicator || {
           domainName: null
@@ -75,18 +66,24 @@ const _formatAssetList = (agg, assetList, entityValue) => {
         return {
           ...(hostname && { hostname }),
           ...(firstSeenDomainName && { firstSeenDomainName }),
-          ...(firstSeenTime && { firstSeenTime: moment(firstSeenTime).format('MMM DD YYYY, h:mm A') }),
+          ...(firstSeenTime && {
+            firstSeenTime: moment(firstSeenTime).format('MMM DD YYYY, h:mm A')
+          }),
           ...(lastSeenDomainName && { lastSeenDomainName }),
-          ...(lastSeenTime && { lastSeenTime: moment(lastSeenTime).format('MMM DD YYYY, h:mm A') })
+          ...(lastSeenTime && {
+            lastSeenTime: moment(lastSeenTime).format('MMM DD YYYY, h:mm A')
+          })
         };
-      }
-    ).filter(_.negate(_.isEmpty));
+      })
+      .filter(_.negate(_.isEmpty));
 
   return {
     ...agg,
     [entityValue]: {
       ...uri,
-      ...(assets && assets.length && { assets })
+      // Return empty array if there are no assets found.  Note that this allows us to differentiate between
+      // not having searched assets and not having any assets.
+      ...(assets && assets.length ? { assets } : { assets: [] })
     }
   };
 };
