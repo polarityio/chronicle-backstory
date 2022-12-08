@@ -90,7 +90,9 @@ const _formatEventList = (agg, eventList, entityValue) => {
     ...agg,
     [entityValue]: {
       ...uri,
-      ...(events && events.length && { events })
+      // Return empty array if there are no events found.  Note that this allows us to differentiate between
+      // not having searched events and not having any events.
+      ...(events && events.length ? { events } : { events: [] })
     }
   };
 };

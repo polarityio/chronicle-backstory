@@ -1,22 +1,29 @@
 <ul class="nav nav-tabs">
-  <li class="nav-item">
-    <a {{action "changeTab" "events"}} class="nav-link {{if (or (eq activeTab "events")(not activeTab)) "active"}}" href="#">
-      Events ({{if details.events.length details.events.length "0"}})
-    </a>
-  </li>
-  <li class="nav-item">
-    <a {{action "changeTab" "assets"}} class="nav-link {{if (or (eq activeTab "assets")(not activeTab)) "active"}}" href="#">
-      Assets ({{if details.assets.length details.assets.length "0"}})
-    </a>
-  </li>
-  <li class="nav-item">
-    <a {{action "changeTab" "iocDetails"}} class="nav-link {{if (or (eq activeTab "iocDetails")(not activeTab)) "active"}}" href="#">
-      IOC Details ({{if details.iocSources.length details.iocSources.length "0"}})
-    </a>
-  </li>
+  {{#if (gte details.assets.length 0)}}
+    <li class="nav-item">
+      <a {{action "changeTab" "assets"}} class="nav-link {{if (eq block._state.activeTab "assets") "active"}}" href="#">
+        Assets ({{if details.assets.length details.assets.length "0"}})
+      </a>
+    </li>
+  {{/if}}
+  {{#if (gte details.events.length 0)}}
+    <li class="nav-item">
+      <a {{action "changeTab" "events"}} class="nav-link {{if (or (eq block._state.activeTab "events")(not block._state.activeTab)) "active"}}" href="#">
+        Events ({{if details.events.length details.events.length "0"}})
+      </a>
+    </li>
+  {{/if}}
+  {{!-- Only show iocDetails if it was searched.  We know it was searched if iocDetails array exists (even if it is empty) --}}
+  {{#if (gte details.iocSources.length 0)}}
+    <li class="nav-item">
+      <a {{action "changeTab" "iocSources"}} class="nav-link {{if (eq block._state.activeTab "iocSources") "active"}}" href="#">
+        IOC Details ({{if details.iocSources.length details.iocSources.length "0"}})
+      </a>
+    </li>
+  {{/if}}
 </ul>
 
-{{#if (eq activeTab "events")}}
+{{#if (eq block._state.activeTab "events")}}
   {{#if details.eventsLink}}
     <div class="p-title">
       <a class="p-link" href={{details.eventsLink}}>
@@ -142,7 +149,7 @@
 
 
 
-{{#if (eq activeTab "assets")}}
+{{#if (eq block._state.activeTab "assets")}}
   {{#if details.assetsLink}}
     <div class="p-title">
       <a class="p-link" href={{details.assetsLink}}>
@@ -198,7 +205,7 @@
 
 
 
-{{#if (eq activeTab "iocDetails")}}
+{{#if (eq block._state.activeTab "iocSources")}}
   {{#if details.iocLink}}
     <div class="p-title">
       <a class="p-link" href={{details.iocLink}}>

@@ -26,11 +26,11 @@ const doLookup = async (entities, options, cb) => {
       Logger
     );
   } catch (error) {
-    const err = parseErrorToReadableJSON(error)
+    const err = parseErrorToReadableJSON(error);
     Logger.error({ error, formattedError: err }, 'Get Lookup Results Failed');
     return cb(handleError(error));
   }
-  
+  Logger.trace({ lookupResults }, 'lookupResults');
   cb(null, lookupResults);
 };
 
