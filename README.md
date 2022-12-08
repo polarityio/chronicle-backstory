@@ -33,6 +33,10 @@ The Private Key associated with your Google Service Account
 Allows you to ignore results that only contain Asset data, while containing no Event or IOC data. 
 > NOTE: This will not remove Assets from the results that do contain Event or IOC data
 
+### Sources to Search
+Select one or more data sources to search.
+
+
 ### Months Back
 The number of months you would like to look back for Events and Assets (decimals work as well, e.g. 0.25)
 
