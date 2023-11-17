@@ -137,10 +137,12 @@
         {{/if}}
       </div>
     {{/each}}
-    {{#if showAllEvents}}
-      <a href="#" class="p-action" {{action "toggleShowMoreEvents"}}>View less events {{fa-icon icon="chevron-up" fixedWidth=true}}</a>
-    {{else}}
-      <a href="#" class="p-action" {{action "toggleShowMoreEvents"}}>View more events {{fa-icon icon="chevron-down" fixedWidth=true}}</a>
+    {{#if (gt details.events.length defaultNumEventsToShow)}}
+      {{#if showAllEvents}}
+        <span class="p-action" {{action "toggleShowMoreEvents"}}>View less events {{fa-icon icon="chevron-up" fixedWidth=true}}</span>
+      {{else}}
+        <span class="p-action" {{action "toggleShowMoreEvents"}}>View more events {{fa-icon icon="chevron-down" fixedWidth=true}}</span>
+      {{/if}}
     {{/if}}
   {{else}}
     <div class="alert alert-info mt-2" role="alert">
@@ -204,10 +206,12 @@
         {{/if}}
       </div>
     {{/each}}
-    {{#if showAllAssets}}
-      <a href="#" class="p-action" {{action "toggleShowMoreAssets"}}>View less assets {{fa-icon icon="chevron-up" fixedWidth=true}}</a>
-    {{else}}
-      <a href="#" class="p-action" {{action "toggleShowMoreAssets"}}>View more assets {{fa-icon icon="chevron-down" fixedWidth=true}}</a>
+    {{#if (gt details.assets.length defaultNumAssetsToShow)}}
+      {{#if showAllAssets}}
+        <span class="p-action" {{action "toggleShowMoreAssets"}}>View less assets {{fa-icon icon="chevron-up" fixedWidth=true}}</span>
+      {{else}}
+        <span class="p-action" {{action "toggleShowMoreAssets"}}>View more assets {{fa-icon icon="chevron-down" fixedWidth=true}}</span>
+      {{/if}}
     {{/if}}
   {{else}}
     <div class="alert alert-info mt-2" role="alert">
