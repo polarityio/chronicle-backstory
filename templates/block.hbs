@@ -42,6 +42,12 @@
             <span class="p-value">{{event.eventType}}</span>
           </div>
         {{/if}}
+        {{#if event.productName}}
+          <div>
+            <span class="p-key">Log Source: </span>
+            <span class="p-value">{{event.productName}}</span>
+          </div>
+        {{/if}}
         {{#if event.eventTimestamp}}
           <div>
             <span class="p-key">Time: </span>
@@ -60,6 +66,12 @@
             <div>
               <span class="p-key">IPs: </span>
               <span class="p-value">{{event.principal.ip}}</span>
+            </div>
+          {{/if}}
+          {{#if event.principal.port}}
+            <div>
+              <span class="p-key">Port: </span>
+              <span class="p-value">{{event.principal.port}}</span>
             </div>
           {{/if}}
           {{#if event.principal.url}}
@@ -81,6 +93,12 @@
             <div>
               <span class="p-key">IPs: </span>
               <span class="p-value">{{event.target.ip}}</span>
+            </div>
+          {{/if}}
+          {{#if event.target.port}}
+            <div>
+              <span class="p-key">Port: </span>
+              <span class="p-value">{{event.target.port}}</span>
             </div>
           {{/if}}
           {{#if event.target.url}}
