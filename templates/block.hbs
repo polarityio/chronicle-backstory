@@ -198,6 +198,12 @@
             <span class="p-value">{{asset.hostname}}</span>
           </div>
         {{/if}}
+        {{#if asset.mac}}
+          <div>
+            <span class="p-key">MAC: </span>
+            <span class="p-value">{{asset.mac}}</span>
+          </div>
+        {{/if}}
         {{#if asset.firstSeenDomainName}}
           <div>
             <span class="p-key">First Seen Domain: </span>

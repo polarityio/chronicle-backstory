@@ -52,6 +52,7 @@ const _formatAssetList = (agg, assetList, entityValue) => {
     assetList.assets
       .map(({ asset, firstSeenArtifactInfo, lastSeenArtifactInfo }) => {
         const { hostname } = asset || { hostname: null };
+        const { mac } = asset || { mac: null };
         const assetIpAddress = asset && asset.assetIpAddress;
         const { artifactIndicator: firstArtifactIndicator, seenTime: firstSeenTime } =
           firstSeenArtifactInfo || { artifactIndicator: null, seenTime: null };
@@ -70,6 +71,7 @@ const _formatAssetList = (agg, assetList, entityValue) => {
         return {
           ...(assetIpAddress && { assetIpAddress }),
           ...(hostname && { hostname }),
+          ...(mac && { mac }),
           ...(firstSeenDomainName && { firstSeenDomainName }),
           ...(firstSeenTime && {
             firstSeenTime: moment(firstSeenTime).format('MMM DD YYYY, h:mm A')
