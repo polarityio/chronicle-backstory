@@ -7,10 +7,10 @@
   "author": "Polarity",
   "dependencies": {
     "aigle": "^1.14.1",
-    "jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "node-cache": "^4.2.0",
-    "postman-request": "^2.88.1-postman.32"
+    "node-cache": "^4.2.1",
+    "postman-request": "^2.88.1-postman.33"
   }
 }
