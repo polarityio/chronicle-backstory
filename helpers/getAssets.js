@@ -5,7 +5,7 @@ const { ASSET_ARTIFACT_TYPES } = require('./constants');
 
 const { _P, generateTimes } = require('./dataTransformations');
 
-const getAssets = async (entityGroups, options, requestWithDefaults) =>
+const getAssets = async (entityGroups, options, requestWithDefaults, Logger) =>
   _P
     .chain(entityGroups)
     .omit(['mac'])
@@ -30,6 +30,10 @@ const getAssets = async (entityGroups, options, requestWithDefaults) =>
               ((assetList.uri && assetList.uri.length) ||
                 (assetList.assets && assetList.assets.length));
 
+            Logger.trace(
+              { assetList },
+              'Asset List Payload from Chronicle (Pre Formatting)'
+            );
             return !valueReturned ? agg : _formatAssetList(agg, assetList, entity.value);
           },
           {}
@@ -48,7 +52,8 @@ const _formatAssetList = (agg, assetList, entityValue) => {
     assetList.assets
       .map(({ asset, firstSeenArtifactInfo, lastSeenArtifactInfo }) => {
         const { hostname } = asset || { hostname: null };
-
+        const { mac } = asset || { mac: null };
+        const assetIpAddress = asset && asset.assetIpAddress;
         const { artifactIndicator: firstArtifactIndicator, seenTime: firstSeenTime } =
           firstSeenArtifactInfo || { artifactIndicator: null, seenTime: null };
 
@@ -64,7 +69,9 @@ const _formatAssetList = (agg, assetList, entityValue) => {
         };
 
         return {
+          ...(assetIpAddress && { assetIpAddress }),
           ...(hostname && { hostname }),
+          ...(mac && { mac }),
           ...(firstSeenDomainName && { firstSeenDomainName }),
           ...(firstSeenTime && {
             firstSeenTime: moment(firstSeenTime).format('MMM DD YYYY, h:mm A')

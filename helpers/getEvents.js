@@ -5,7 +5,7 @@ const { EVENT_INDICATOR_TYPES } = require('./constants');
 
 const { _P, generateTimes } = require('./dataTransformations');
 
-const getEvents = async (entityGroups, options, requestWithDefaults) =>
+const getEvents = async (entityGroups, options, requestWithDefaults, Logger) =>
   _P
     .chain(entityGroups)
     .pick(['ip', 'domain', 'mac'])
@@ -30,6 +30,8 @@ const getEvents = async (entityGroups, options, requestWithDefaults) =>
               ((eventList.uri && eventList.uri.length) ||
                 (eventList.events && eventList.events.length));
 
+            Logger.trace({ eventList }, 'Events from Chronicle (Pre Formatting)');
+
             return !valueReturned ? agg : _formatEventList(agg, eventList, entity.value);
           },
           {}
@@ -38,7 +40,6 @@ const getEvents = async (entityGroups, options, requestWithDefaults) =>
       {}
     )
     .value();
-
 
 const _formatEventList = (agg, eventList, entityValue) => {
   const uri = eventList.uri && { eventsLink: eventList.uri[0] };
@@ -49,11 +50,13 @@ const _formatEventList = (agg, eventList, entityValue) => {
     eventList.events
       .map(
         ({ metadata: _metadata, principal: _principal, target: _target, ...event }) => {
-          const { eventTimestamp, collectedTimestamp, eventType } = _metadata || {
-            eventTimestamp: null,
-            collectedTimestamp: null,
-            eventType: null
-          };
+          const { eventTimestamp, collectedTimestamp, eventType, productName } =
+            _metadata || {
+              eventTimestamp: null,
+              collectedTimestamp: null,
+              eventType: null,
+              productName: null
+            };
 
           const { principalIp, ...principal } = _principal || { principalIp: null };
           const { targetIp, ...target } = _target || { targetIp: null };
@@ -61,6 +64,7 @@ const _formatEventList = (agg, eventList, entityValue) => {
           return {
             ...event,
             ...(eventType && { eventType }),
+            ...(productName && { productName }),
             ...(eventTimestamp && {
               eventTimestamp: moment(eventTimestamp).format('MMM DD YYYY, h:mm A')
             }),
