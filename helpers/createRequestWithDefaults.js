@@ -86,7 +86,7 @@ const createRequestWithDefaults = (Logger) => {
       throw error;
     });
 
-    Logger.trace({ token }, 'Token');
+    Logger.trace({ token }, 'getAuthToken Request');
 
     return {
       ...requestOptions,
@@ -109,7 +109,7 @@ const createRequestWithDefaults = (Logger) => {
       statusCode,
       requestOptions: requestOptionsWithoutSensitiveData,
       body
-    });
+    }, 'Request Results');
 
     checkForInternalServiceError(statusCode, body);
 

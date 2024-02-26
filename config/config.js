@@ -32,8 +32,8 @@ module.exports = {
         'The domain you use for accessing Chronicle Backstory.  This does not include the full URL or "http(s)://" but can include your regional subdomain.',
       default: 'backstory.googleapis.com',
       type: 'text',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'issuerEmail',
@@ -41,8 +41,8 @@ module.exports = {
       description: 'The Issuer Email associated with your Google Service Account',
       default: '',
       type: 'text',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'privateKey',
@@ -60,8 +60,8 @@ module.exports = {
         'Allows you to ignore results that only contain Asset data, while containing no Event or IOC data. NOTE: This will not remove Assets from the results that do contain Event or IOC data',
       default: false,
       type: 'boolean',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'sourcesToSearch',
@@ -101,14 +101,14 @@ module.exports = {
       adminOnly: true
     },
     {
-      key: 'monthsBack',
-      name: 'Months Back',
+      key: 'daysBack',
+      name: 'Days Back',
       description:
-        'The number of months you would like to look back for Events and Assets  (decimals work as well, e.g. 0.25)',
-      default: 6,
+        'The number of days you would like to look back for Events and Assets.  Supports fractional days (e.g., 0.25 would be 8 hours)',
+      default: 7,
       type: 'number',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     }
   ]
 };
