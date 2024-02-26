@@ -37,8 +37,26 @@ Allows you to ignore results that only contain Asset data, while containing no E
 Select one or more data sources to search.
 
 
-### Months Back
-The number of months you would like to look back for Events and Assets (decimals work as well, e.g. 0.25)
+### Days Back
+The number of days you would like to look back for Events and Assets. Supports fractional days (e.g., 0.25 would be 8 hours)
+
+
+## Known Issues
+
+### 503 Server Errors
+
+The Chronicle REST API will time out with a 503 HTTP Status Code when searching assets for certain IP addresses.  If this is happening you may see an error like this:
+
+```
+{
+  error: {
+    "status": 503,
+    "description": "UNAVAILABLE -> The service is currently unavailable."
+  }
+}
+```
+
+You can try adjusting the "Days Back" option to reduce the amount of data that Chronicle searches or turn off "Asset" search.
 
 
 ## Creating a Service Account

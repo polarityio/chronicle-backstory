@@ -49,18 +49,18 @@ const splitOutIgnoredIps = (_entitiesPartition) => {
   };
 };
 
-const generateTimes = ({ monthsBack }, queryingEvents = false) => {
-  const monthsBackDateTime =
+const generateTimes = ({ daysBack }, queryingEvents = false) => {
+  const hoursBack = daysBack * 24;
+  const daysBackDateTime =
     moment
       .utc()
-      .subtract(Math.floor(Math.abs(monthsBack)), 'months')
-      .subtract((Math.abs(monthsBack) % 1) * 30.41, 'days')
-      .format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+      .subtract(Math.abs(hoursBack), 'hours')
+      .format('YYYY-MM-DDTHH:mm:ssZ');
 
   return {
-    start_time: monthsBackDateTime,
-    end_time: moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z',
-    ...(queryingEvents && { reference_time: monthsBackDateTime })
+    start_time: daysBackDateTime,
+    end_time: moment.utc().format('YYYY-MM-DDTHH:mm:ssZ'),
+    ...(queryingEvents && { reference_time: daysBackDateTime })
   };
 };
 

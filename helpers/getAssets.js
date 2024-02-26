@@ -15,7 +15,7 @@ const getAssets = async (entityGroups, options, requestWithDefaults, Logger) =>
         ...(await _P.reduce(
           entityGroup,
           async (agg, entity) => {
-            const { body: assetList } = await requestWithDefaults({
+            const requestOptions = {
               url: `https://${options.domain}/v1/artifact/listassets`,
               options,
               qs: {
@@ -23,7 +23,11 @@ const getAssets = async (entityGroups, options, requestWithDefaults, Logger) =>
                 page_size: 25,
                 ...generateTimes(options)
               }
-            });
+            };
+
+            Logger.trace({ requestOptions }, 'Searching Assets');
+
+            const { body: assetList } = await requestWithDefaults(requestOptions);
 
             const valueReturned =
               assetList &&
@@ -31,7 +35,7 @@ const getAssets = async (entityGroups, options, requestWithDefaults, Logger) =>
                 (assetList.assets && assetList.assets.length));
 
             Logger.trace(
-              { assetList },
+              { assetList, valueReturned },
               'Asset List Payload from Chronicle (Pre Formatting)'
             );
             return !valueReturned ? agg : _formatAssetList(agg, assetList, entity.value);
