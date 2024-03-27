@@ -64,7 +64,7 @@ const _createSummary = (iocDetails, assets, events) => {
   const iocDetailsTags =
     iocDetails &&
     iocDetails.iocSources &&
-    iocDetails.iocSources.length > 1 &&
+    iocDetails.iocSources.length > 0 &&
     _.compact([
       iocDetails.iocSources[0].confidenceScore &&
         `Confidence: ${iocDetails.iocSources[0].confidenceScore}`,
