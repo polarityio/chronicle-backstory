@@ -26,7 +26,8 @@ const createLookupResults = (
   entityGroups,
   iocDetailsMap,
   assetsMap,
-  eventsMap
+  eventsMap,
+  Logger
 ) =>
   _.flatMap(entityGroups, (entityGroup, entityType) =>
     _.map(entityGroup, (entity) => {
@@ -49,7 +50,7 @@ const createLookupResults = (
         data: !resultsFound
           ? null
           : {
-              summary: _createSummary(iocDetails, assets, events),
+              summary: _createSummary(iocDetails, assets, events, Logger),
               details: {
                 ...iocDetails,
                 ...assets,
@@ -60,20 +61,27 @@ const createLookupResults = (
     })
   );
 
-const _createSummary = (iocDetails, assets, events) => {
-  const iocDetailsTags =
+const _createSummary = (iocDetails, assets, events, Logger) => {
+  let iocDetailsTags;
+
+  if (
     iocDetails &&
-    iocDetails.iocSources &&
-    iocDetails.iocSources.length > 1 &&
-    _.compact([
-      iocDetails.iocSources[0].confidenceScore &&
-        `Confidence: ${iocDetails.iocSources[0].confidenceScore}`,
-      iocDetails.iocSources[0].category &&
-        `Category: ${iocDetails.iocSources[0].category}`,
-      iocDetails.iocSources[0].category &&
-        `Severity: ${iocDetails.iocSources[0].rawSeverity}`,
-      `# of IOC: ${iocDetails.iocSources.length}`
-    ]);
+    Array.isArray(iocDetails.iocSources) &&
+    iocDetails.iocSources.length > 1
+  ) {
+    iocDetailsTags = [`# of IOCs: ${iocDetails.iocSources.length}`];
+  } else {
+    iocDetailsTags =
+      iocDetails &&
+      iocDetails.iocSources &&
+      iocDetails.iocSources.length === 1 &&
+      _.compact([
+        iocDetails.iocSources[0].category &&
+          `Category: ${iocDetails.iocSources[0].category}`,
+        iocDetails.iocSources[0].category &&
+          `Severity: ${iocDetails.iocSources[0].rawSeverity}`
+      ]);
+  }
 
   const assetsTags = assets && assets.assets && `# of Assets: ${assets.assets.length}`;
   const eventsTags = events && events.events && `# of Events: ${events.events.length}`;

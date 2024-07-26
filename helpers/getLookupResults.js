@@ -60,7 +60,8 @@ const getLookupResults = (entities, options, requestWithDefaults, Logger) =>
         entityGroups,
         iocDetails,
         assets,
-        events
+        events,
+        Logger
       );
 
       Logger.trace({ iocDetails, assets, events, lookupResults }, 'Query Results');
