@@ -3,7 +3,7 @@ module.exports = {
   acronym: 'CHBS',
   description:
     'Chronicle Backstory combines intelligence about global threats in the wild, threats inside your network, and unique signals about both.',
-  entityTypes: ['IPv4', 'IPv6', 'domain', 'MAC', 'hash'],
+  entityTypes: ["IPv4", "IPv6", "domain", "MAC", "MD5", "SHA1", "SHA256"],
   defaultColor: 'light-purple',
   styles: ['./styles/styles.less'],
   block: {
