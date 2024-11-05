@@ -1,6 +1,6 @@
 {
   "name": "chronicle-backstory",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "main": "./integration.js",
   "private": true,
   "license": "MIT",
@@ -11,6 +11,6 @@
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "node-cache": "^4.2.1",
-    "postman-request": "^2.88.1-postman.36"
+    "postman-request": "^2.88.1-postman.40"
   }
 }
